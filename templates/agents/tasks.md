@@ -1,6 +1,6 @@
 # Tasks
 
-Legend: `[ ]` todo · `[~]` in progress (max ONE at a time) · `[x]` done
+Legend: `[ ]` todo · `[~]` in progress (max ONE at a time, except tasks fanned out to parallel subagents) · `[x]` done
 
 ## Tasks
 

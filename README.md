@@ -5,7 +5,7 @@ A reusable framework that makes long-running Claude Code projects survive usage-
 ## How it works
 
 1. **Planning run** (first session): the agent reads `agents/description.txt`, asks clarifying questions, writes `agents/plan.md` (immutable forever after), and seeds `agents/tasks.md` + `agents/architecture.md`.
-2. **Implementation runs**: each agent reads `CLAUDE.md` → `agents/session_management_instructions.md` → `agents/session_handling.md` → `agents/tasks.md` → `agents/architecture.md`, verifies the repo matches the docs, and continues from "Next steps".
+2. **Implementation runs**: each agent reads `CLAUDE.md` → `agents/session_management_instructions.md` → `agents/session_handling.md` → `agents/tasks.md` → `agents/architecture.md`, verifies the repo matches the docs, and continues from "Next steps". When pending tasks are independent (no dependencies, disjoint files), the agent fans them out to parallel subagents; every subagent must end with the exit ritual (report changes + resume point) and the parent checkpoints each result before its own handoff.
 3. **Checkpointing**: after every completed task the agent ticks `tasks.md`, logs one progress line, and **autocommits + pushes** (`git commit -m "task: ..." && git push`). When the session grows long (token-budget heuristics), it stops taking new tasks and runs the **handoff ritual** — a full rewrite of `session_handling.md` with summary, in-progress state, exact next steps, and gotchas, sealed with a final `handoff:` commit.
 
 ## Install into a project
