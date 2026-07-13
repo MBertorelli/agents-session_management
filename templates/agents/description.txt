@@ -1,0 +1,5 @@
+REPLACE THIS FILE with a description of WHAT you want to build and its requirements.
+
+It is read once, by the first (planning) session, to generate agents/plan.md.
+Include: the goal, functional requirements, constraints, tech preferences, and
+anything the planning agent should ask you about. It is ignored after planning.
