@@ -13,6 +13,7 @@ Rules for every agent session in this project. Goal: no session ever ends in a s
 After EVERY completed task:
 1. Tick its checkbox in `tasks.md` (`[~]` → `[x]`).
 2. Append one line under "Progress log" in `session_handling.md`: what was done + any resume-relevant detail.
+3. Commit and push: `git add -A && git commit -m "task: <short task description>" && git push`. If push fails (no remote/network), commit anyway and note the failure in `session_handling.md`.
 
 Never start a task you cannot describe a resume point for. If a task is too big to finish safely, split it in `tasks.md` first.
 
@@ -33,7 +34,7 @@ Rewrite `session_handling.md` using its fixed headings:
 - **Next steps** — ordered, imperative instructions the next agent can execute cold ("1. Finish X in `src/y.py`, the loop at ~L40 still lacks error handling…").
 - **Gotchas & decisions** — surprises, pitfalls, decisions made this session.
 
-Then: update `tasks.md` to current reality, and append to `architecture.md` if any engineering decision was made or changed.
+Then: update `tasks.md` to current reality, append to `architecture.md` if any engineering decision was made or changed, and finish with a handoff commit: `git add -A && git commit -m "handoff: <one-line session summary>" && git push`.
 
 ## 5. File contract
 

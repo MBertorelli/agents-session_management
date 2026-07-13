@@ -6,7 +6,7 @@ A reusable framework that makes long-running Claude Code projects survive usage-
 
 1. **Planning run** (first session): the agent reads `agents/description.txt`, asks clarifying questions, writes `agents/plan.md` (immutable forever after), and seeds `agents/tasks.md` + `agents/architecture.md`.
 2. **Implementation runs**: each agent reads `CLAUDE.md` → `agents/session_management_instructions.md` → `agents/session_handling.md` → `agents/tasks.md` → `agents/architecture.md`, verifies the repo matches the docs, and continues from "Next steps".
-3. **Checkpointing**: after every completed task the agent ticks `tasks.md` and logs one progress line. When the session grows long (token-budget heuristics), it stops taking new tasks and runs the **handoff ritual** — a full rewrite of `session_handling.md` with summary, in-progress state, exact next steps, and gotchas.
+3. **Checkpointing**: after every completed task the agent ticks `tasks.md`, logs one progress line, and **autocommits + pushes** (`git commit -m "task: ..." && git push`). When the session grows long (token-budget heuristics), it stops taking new tasks and runs the **handoff ritual** — a full rewrite of `session_handling.md` with summary, in-progress state, exact next steps, and gotchas, sealed with a final `handoff:` commit.
 
 ## Install into a project
 
@@ -14,7 +14,9 @@ A reusable framework that makes long-running Claude Code projects survive usage-
 ./init_project.sh /path/to/project
 ```
 
-Copies `CLAUDE.md` to the project root and the `agents/` templates. Never overwrites existing files, so it is safe to re-run. Then fill in `/path/to/project/agents/description.txt` and start the planning run interactively:
+Copies `CLAUDE.md` to the project root, the `agents/` templates, and `.claude/settings.json` (allowlists the git commands agents need for autocommit — without it, headless sessions would stall waiting for permission). Never overwrites existing files, so it is safe to re-run.
+
+The project must be a **git repo with a push-ready remote** (e.g. GitHub over SSH or a credential helper — cron can't answer auth prompts). Then fill in `/path/to/project/agents/description.txt` and start the planning run interactively:
 
 ```bash
 cd /path/to/project && claude
@@ -57,3 +59,4 @@ Notes:
 - **No true token visibility**: agents cannot see your remaining usage, so the framework relies on per-task checkpointing (bounds any loss to one task) plus conversation-length heuristics for the full handoff. A hard cutoff mid-task can still lose that task's uncommitted progress.
 - **Headless sessions can't ask questions**: anything ambiguous should be resolved during the interactive planning run; implementation agents are instructed to note open questions in `session_handling.md` rather than guess on big decisions.
 - **Cron timing is yours to tune**: the reset window depends on your subscription plan.
+- **Autocommit needs non-interactive git auth**: if `git push` prompts for credentials, cron runs will fail to push; agents are instructed to still commit locally and note it in `session_handling.md`.

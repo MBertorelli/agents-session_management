@@ -25,6 +25,8 @@ copy_if_absent() {
 }
 
 copy_if_absent "$TEMPLATES/CLAUDE.md" "$TARGET/CLAUDE.md"
+mkdir -p "$TARGET/.claude"
+copy_if_absent "$TEMPLATES/settings.json" "$TARGET/.claude/settings.json"
 for f in "$TEMPLATES/agents/"*; do
     copy_if_absent "$f" "$TARGET/agents/$(basename "$f")"
 done
@@ -32,5 +34,6 @@ done
 echo
 echo "Done. Next steps:"
 echo "  1. Fill in $TARGET/agents/description.txt with what you want to build."
-echo "  2. Start the planning run:  cd $TARGET && claude"
-echo "  3. Wire the cron job (see README.md) using resume_session.sh."
+echo "  2. Make sure the project is a git repo with a push-ready remote (agents autocommit per task)."
+echo "  3. Start the planning run:  cd $TARGET && claude"
+echo "  4. Wire the cron job (see README.md) using resume_session.sh."

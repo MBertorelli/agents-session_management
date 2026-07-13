@@ -16,4 +16,4 @@ This project uses a session-management framework so work survives usage-limit cu
 
 ## Hard rule
 
-NEVER end a session — voluntarily or because tokens are running low — without `agents/session_handling.md` and `agents/tasks.md` reflecting current reality. If in doubt, checkpoint now.
+NEVER end a session — voluntarily or because tokens are running low — without `agents/session_handling.md` and `agents/tasks.md` reflecting current reality, committed and pushed. If in doubt, checkpoint now.
