@@ -44,11 +44,12 @@ Every task in `agents/tasks.md` carries tags (written in the planning run, and w
 
 ## Delegation
 
-- **Inline threshold:** the lead may implement trivial edits itself (≈≤10 lines in one file) and always does doc/checkpoint updates. Everything else is delegated to the tagged executor — delegation has overhead, so don't delegate trivia, but don't hoard real work either.
+- **Inline threshold:** the lead may implement small edits itself (≈≤30 lines, in one file or two tightly related files) and always does doc/checkpoint updates. Everything else is delegated to the tagged executor. Every spawn pays a cold start (reading the framework docs and the code it builds on, the brief, the exit report, the lead's review), so don't delegate trivia, but don't hoard real work either.
+- **Bundle tiny tasks:** when several ready tasks are each small (diff:L, risk:L or M), share an executor tier and touch disjoint files, give them to ONE executor in one brief on one branch (`task/<ID1>-<ID2>`). Bundle `-R` test reviews the same way. Checkpoint each ID with its own progress line.
 - **Brief every delegation fully.** Executors start with no conversation context. Use:
 
 ```
-Task <ID> from agents/tasks.md (read AGENTS.md, agents/plan.md, agents/tasks.md, agents/architecture.md first).
+Task <ID> from agents/tasks.md (read AGENTS.md, agents/architecture.md, and only the <ID> + deps/coreqs lines of agents/tasks.md; plan.md: <sections, or "not needed">).
 Objective: …
 Scope / files: … (do not touch anything else)
 Acceptance criteria: …
@@ -58,6 +59,7 @@ Deps merged: … · Coreqs in flight: … (contract at <file>@<sha>)
 Escalate (stop and report) if: task is riskier/harder than tagged, scope must grow, contract must change, tests fail twice.
 ```
 
+- **Executor type not loaded:** agent definitions in `.claude/agents/` load only at Claude Code startup. If a tagged executor is unavailable, spawn `general-purpose` with that file's `model` and start the brief with "Act as <name>: read `.claude/agents/<name>.md` first and follow its rules and exit ritual."
 - **Escalation path:** Haiku → Sonnet → Opus. Pass the previous executor's findings and failed attempts forward; reclassify the task in `tasks.md`.
 - **After every delegated task** the lead inspects the actual diff, checks scope, runs `verify`, confirms acceptance criteria, then checkpoints. Log the executor actually used in the progress line (auditable routing).
 

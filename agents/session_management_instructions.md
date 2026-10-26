@@ -15,6 +15,8 @@ The lead owns every checkpoint. After EVERY completed task (including merged wor
 2. Append one line under "Progress log" in `session_handling.md`: what was done, executor used, branch merged (if any), resume-relevant detail.
 3. Commit and push: `git add -A && git commit -m "task: <ID> <short description>" && git push`. If push fails (no remote/network), commit anyway and note the failure in `session_handling.md`.
 
+**Batched checkpoints:** when several fanned-out tasks with disjoint files come back close together, the lead may merge them all, run one combined verify (the affected suites), and checkpoint them in a single commit (`task: <ID> <ID> …`), still with one progress line per task. A failing combined verify means bisecting by merge before checkpointing.
+
 Never start a task you cannot describe a resume point for. If a task is too big to finish safely, split it in `tasks.md` first (and tag the pieces).
 
 ## 3. Parallel execution (fan-out)
@@ -26,6 +28,8 @@ Fan pending tasks out to parallel subagents (Agent tool, `subagent_type` = the t
 - EVERY subagent must end with the exit ritual defined in its agent file: files changed, branch + commit SHA, verify output, resume point, gotchas, reclassification proposal. A result without this is treated as failed — re-verify its work before trusting it.
 - The lead merges and checkpoints each result (sections 2 and 4). The lead must NOT end — and must not start new fan-outs — until every launched subagent's result is merged-or-recorded and the handoff ritual (section 6) is done.
 - If tokens run low with subagents still out, wait for them, checkpoint their results, and hand off. Never abandon in-flight subagents silently; if one is lost, record it under "In-progress state".
+- **Recovering a lost subagent:** one cut off by a session ending can usually be resumed with SendMessage; one the user stopped cannot. Otherwise spawn a fresh executor in the SAME worktree (no isolation flag; give the absolute worktree path and list the partial files in a continuation brief). A worktree with no changes may have been auto-removed: check `git log <session-branch>..task/<ID>` and `git worktree list` before assuming work exists.
+- **Long-running commands** (builds, full test suites): run them in the background or keep them inside the shell tool's timeout limit. A command killed at the limit looks like a crash and can take the lead session down with it.
 
 ## 4. Worktree & sync protocol
 
