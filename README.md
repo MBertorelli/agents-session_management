@@ -13,7 +13,7 @@ This repository *is* the template: copy its files into a project (see Install).
    - `medium-executor` (Sonnet): normal features, refactors, edge-case tests, debugging, **review of every Haiku-written test**
    - `high-executor` (Opus): architecture, high-risk work, diagrams, co-requisite contracts, merge conflicts
 
-   Every executor reads `AGENTS.md`, `agents/plan.md`, `agents/tasks.md`, and `agents/architecture.md` when it spawns, then works only on its task ID. Executors escalate (Haiku → Sonnet → Opus) rather than force a task they've outgrown.
+   Every executor reads `AGENTS.md`, `agents/architecture.md`, and only its own (plus deps/coreqs) lines of `agents/tasks.md` when it spawns (`agents/plan.md` only in the sections its brief names), then works only on its task ID. Small tasks and test reviews are bundled into one executor to save cold starts. Executors escalate (Haiku → Sonnet → Opus) rather than force a task they've outgrown.
 4. **Worktrees & sync**: executors that run in parallel each get their own git worktree on a `task/<ID>` branch. Prerequisite tasks are merged before dependents spawn. Co-requisite tasks fan out from a shared contract committed first, and resync with `git merge` if the contract changes. The lead merges branches back in dependency order and verifies each one.
 5. **Checkpointing**: after every completed task the lead ticks `tasks.md`, logs one progress line (including the executor used), and **autocommits + pushes**. When the session grows long (token-budget heuristics), it stops taking new tasks and runs the **handoff ritual**: a full rewrite of `session_handling.md` (summary, in-progress state including unmerged task branches, exact next steps, gotchas), sealed with a final `handoff:` commit.
 

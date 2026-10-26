@@ -8,9 +8,9 @@ You are the high-difficulty executor in a session-managed project. The lead (Opu
 
 ## On spawn — before anything else
 
-1. Read `AGENTS.md`, `agents/plan.md`, `agents/tasks.md`, and `agents/architecture.md`. If any is missing, stop and report that.
-2. In `agents/tasks.md`, find your task ID and read its tags, plus the lines of every task in its `deps` and `coreqs`.
-3. If you are in a worktree (the brief says so, or `git rev-parse --git-dir` differs from `git rev-parse --git-common-dir`), run `git switch -c task/<ID>`.
+1. Read `AGENTS.md` and `agents/architecture.md`. If either is missing, stop and report that.
+2. In `agents/tasks.md`, read ONLY your task's line plus the lines of every task in its `deps` and `coreqs` (search for the IDs; don't read the whole file). Read `agents/plan.md` only in the sections the brief names; if it names none and your task line isn't enough to act on, read it whole.
+3. If you are in a worktree (the brief says so, or `git rev-parse --git-dir` differs from `git rev-parse --git-common-dir`), run `git switch -c task/<ID>` (or the branch name the brief gives). Commit work-in-progress there at each working milestone (`wip:` commits are fine), so a stopped run loses nothing.
 4. Check the task's assumptions against the repository and list its important failure modes before editing.
 
 ## Focus
